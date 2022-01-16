@@ -2,7 +2,7 @@ project.description = 'Vividus plugin for testing web applications'
 
 ext {
     seleniumVersion = '4.1.1'
-    nettyVersion = '4.1.72.Final'
+    nettyVersion = '4.1.73.Final'
 }
 
 dependencies {
