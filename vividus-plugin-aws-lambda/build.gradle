@@ -5,7 +5,7 @@ dependencies {
     implementation platform(group: 'com.amazonaws', name: 'aws-java-sdk-bom', version: '1.12.410')
     implementation(group: 'com.amazonaws', name: 'aws-java-sdk-lambda')
 
-    testImplementation platform(group: 'org.junit', name: 'junit-bom', version: '5.9.2')
+    testImplementation platform(group: 'org.junit', name: 'junit-bom', version: '5.9.3')
     testImplementation(group: 'org.junit.jupiter', name: 'junit-jupiter')
     testImplementation platform(group: 'org.mockito', name: 'mockito-bom', version: '5.2.0')
     testImplementation(group: 'org.mockito', name: 'mockito-junit-jupiter')
