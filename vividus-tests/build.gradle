@@ -6,6 +6,18 @@ tasks.publish.enabled = false
 runStories.treatKnownIssuesOnlyAsPassed = true
 debugStories.treatKnownIssuesOnlyAsPassed = true
 
+testVividusInitialization {
+    jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
+validateKnownIssues {
+    jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
+runStories {
+    jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
 dependencies {
     implementation project(':vividus')
     implementation project(':vividus-plugin-accessibility')

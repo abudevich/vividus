@@ -1,5 +1,9 @@
 project.description = 'VIVIDUS facade for Jira'
 
+test {
+    jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
 dependencies {
     implementation project(':vividus-http-client')
     implementation project(':vividus-util')

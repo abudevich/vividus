@@ -2,6 +2,10 @@ project.description = 'VIVIDUS plugin for JSON testing'
 
 ext.jsonPathVersion = '2.8.0'
 
+test {
+    jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
 dependencies {
     implementation project(':vividus-engine')
     implementation project(':vividus-reporter')
