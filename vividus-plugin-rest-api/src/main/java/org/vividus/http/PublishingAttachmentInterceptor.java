@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2023 the original author or authors.
+ * Copyright 2019-2024 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.github.dzieciou.testing.curl.Http2Curl;
+import com.github.dzieciou.testing.curl.Options;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.EntityDetails;
 import org.apache.hc.core5.http.Header;
@@ -75,25 +78,38 @@ public class PublishingAttachmentInterceptor implements HttpRequestInterceptor, 
                 }
             }
         }
-        attachApiMessage("Request: " + request, request.getHeaders(), body, mimeType, -1);
+        String curlCommand = null;
+        try
+        {
+            Http2Curl http2Curl = new Http2Curl(Options.builder().printMultiliner().build());
+            curlCommand = http2Curl.generateCurl(request);
+        }
+        catch (Exception e)
+        {
+            LOGGER.error("Error is occurred on building cURL command", e);
+        }
+        attachApiMessage("Request: " + request, request.getHeaders(), body, mimeType, -1, curlCommand);
     }
 
     @Override
-    public void handle(HttpResponse response) throws IOException
+    public void handle(HttpResponse response)
     {
         Header[] headers = response.getResponseHeaders();
         String attachmentTitle = String.format("Response: %s %s", response.getMethod(), response.getFrom());
         String mimeType = MimeTypeUtils.getMimeTypeFromHeadersWithDefault(headers);
-        attachApiMessage(attachmentTitle, headers, response.getResponseBody(), mimeType, response.getStatusCode());
+        attachApiMessage(attachmentTitle, headers, response.getResponseBody(), mimeType,
+                response.getStatusCode(), null);
     }
 
-    private void attachApiMessage(String title, Header[] headers, byte[] body, String mimeType, int statusCode)
+    private void attachApiMessage(String title, Header[] headers, byte[] body, String mimeType,
+                                               int statusCode, String curlCommand)
     {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("headers", headers);
         dataMap.put("body", body != null ? new String(body, StandardCharsets.UTF_8) : null);
         dataMap.put("bodyContentType", mimeType);
         dataMap.put("statusCode", statusCode);
+        dataMap.put("curlCommand", StringEscapeUtils.escapeHtml4(curlCommand));
 
         attachmentPublisher.publishAttachment("/org/vividus/http/attachment/api-message.ftl", dataMap, title);
     }
