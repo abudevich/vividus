@@ -16,18 +16,22 @@
 
 package org.vividus.model.jbehave;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import org.vividus.model.MetaWrapper;
 
 public class Story
 {
     private String path;
     private Lifecycle lifecycle;
+    private List<Meta> meta;
     private List<Scenario> scenarios;
 
     public String getPath()
@@ -60,6 +64,16 @@ public class Story
         this.scenarios = scenarios;
     }
 
+    public List<Meta> getMeta()
+    {
+        return meta;
+    }
+
+    public void setMeta(List<Meta> meta)
+    {
+        this.meta = meta;
+    }
+
     /**
      * Get unique scenarios.
      *
@@ -88,6 +102,28 @@ public class Story
                         .map(Optional::get)
                         .peek(s -> adjustScenarioWithLifecycle(s.getExamples().getParameters(), lifecycleParameters))
                         .toList();
+    }
+
+    /**
+     * Get all <b>meta</b> values
+     *
+     * <p><i>Notes</i>
+     * <ul>
+     * <li><b>meta</b>s without value are ignored</li>
+     * <li><b>meta</b> values are trimmed upon returning</li>
+     * <li><i>;</i> char is used as a separator for <b>meta</b> with multiple values</li>
+     * </ul>
+     *
+     * @param metaName the meta name
+     * @return  the meta values
+     */
+    public Set<String> getMetaValues(String metaName)
+    {
+        return meta.stream()
+                .filter(m -> metaName.equals(m.getName()))
+                .map(Meta::getValue)
+                .flatMap(value -> MetaWrapper.parsePropertyValues(value).stream())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private static Scenario merge(Scenario left, Scenario right)

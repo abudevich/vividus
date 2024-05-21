@@ -109,7 +109,7 @@ public class XrayExporter
         }
     }
 
-    private void addTestCasesToTestExecution(List<Entry<String, Scenario>> testCases)
+    protected void addTestCasesToTestExecution(List<Entry<String, Scenario>> testCases)
     {
         String testExecutionKey = xrayExporterOptions.getTestExecutionKey();
 
@@ -183,7 +183,7 @@ public class XrayExporter
         return Optional.empty();
     }
 
-    private ManualTestCaseParameters createManualTestCaseParameters(String storyTitle, Scenario scenario)
+    protected ManualTestCaseParameters createManualTestCaseParameters(String storyTitle, Scenario scenario)
             throws SyntaxException
     {
         ManualTestCaseParameters parameters = new ManualTestCaseParameters();
@@ -192,7 +192,7 @@ public class XrayExporter
         return parameters;
     }
 
-    private CucumberTestCaseParameters createCucumberTestCaseParameters(Scenario scenario)
+    protected CucumberTestCaseParameters createCucumberTestCaseParameters(Scenario scenario)
     {
         CucumberTestCaseParameters parameters = new CucumberTestCaseParameters();
         fillTestCaseParameters(parameters, TestCaseType.CUCUMBER, scenario);
@@ -211,7 +211,7 @@ public class XrayExporter
         parameters.setSummary(scenario.getTitle());
     }
 
-    private void publishErrors()
+    protected void publishErrors()
     {
         if (!errors.isEmpty())
         {
@@ -231,7 +231,7 @@ public class XrayExporter
         LOGGER.atInfo().log("Export successful");
     }
 
-    private void createTestsLink(String testCaseId, Scenario scenario)
+    protected void createTestsLink(String testCaseId, Scenario scenario)
             throws IOException, NotUniqueMetaValueException, JiraConfigurationException
     {
         Optional<String> requirementId = scenario.getUniqueMetaValue("requirementId");
@@ -242,7 +242,7 @@ public class XrayExporter
     }
 
     @FunctionalInterface
-    private interface CreateParametersFunction
+    protected interface CreateParametersFunction
             extends FailableBiFunction<String, Scenario, AbstractTestCaseParameters, SyntaxException>
     {
     }
