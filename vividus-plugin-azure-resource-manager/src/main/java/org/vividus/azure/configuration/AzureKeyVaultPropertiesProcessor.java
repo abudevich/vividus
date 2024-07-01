@@ -34,14 +34,20 @@ public class AzureKeyVaultPropertiesProcessor extends AbstractPropertiesProcesso
 {
     private static final String KEY_VAULT_PROPERTY_NAME = "azure.key-vault.name";
 
-    private final Properties properties;
+    private Properties properties;
     private SecretClient secretClient;
     private AnnotationConfigApplicationContext context;
+
+    public AzureKeyVaultPropertiesProcessor()
+    {
+        super("AZURE_KEY_VAULT");
+    }
 
     public AzureKeyVaultPropertiesProcessor(Properties properties)
     {
         super("AZURE_KEY_VAULT");
         this.properties = properties;
+        System.out.println("HELLO FROM AzureKeyVaultPropertiesProcessor!");
     }
 
     @Override

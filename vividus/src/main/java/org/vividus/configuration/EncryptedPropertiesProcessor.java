@@ -26,12 +26,18 @@ import org.vividus.encryption.NoDecryptionPasswordException;
 public class EncryptedPropertiesProcessor extends AbstractPropertiesProcessor
 {
     private static final String ENC = "ENC";
-    private final Decryptor decryptor;
+    private Decryptor decryptor;
+
+    public EncryptedPropertiesProcessor()
+    {
+        super(ENC);
+    }
 
     EncryptedPropertiesProcessor(Properties properties)
     {
         super(ENC);
         this.decryptor = new Decryptor(properties);
+        System.out.println("HELLO FROM EncryptedPropertiesProcessor!");
     }
 
     @Override

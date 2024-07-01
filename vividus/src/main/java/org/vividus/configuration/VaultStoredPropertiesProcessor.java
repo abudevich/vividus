@@ -36,14 +36,20 @@ import org.springframework.vault.support.VaultResponse;
 public class VaultStoredPropertiesProcessor extends AbstractPropertiesProcessor implements Closeable
 {
     private static final Pattern SECRET_PATTERN = Pattern.compile("(?<engine>[^/]+)/(?<path>.+)/(?<key>[^/]+)$");
-    private final Properties properties;
+    private Properties properties;
     private VaultTemplate vaultTemplate;
     private AnnotationConfigApplicationContext context;
+
+    public VaultStoredPropertiesProcessor()
+    {
+        super("VAULT");
+    }
 
     VaultStoredPropertiesProcessor(Properties properties)
     {
         super("VAULT");
         this.properties = properties;
+        System.out.println("HELLO FROM VaultStoredPropertiesProcessor!");
     }
 
     @Override

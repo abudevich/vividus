@@ -17,11 +17,13 @@
 package org.vividus.configuration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -144,17 +146,24 @@ public final class ConfigurationResolver
         deprecatedPropertiesHandler.removeDeprecated(properties);
         resolveSpelExpressions(properties, false);
 
-        try (VaultStoredPropertiesProcessor vaultProcessor = new VaultStoredPropertiesProcessor(properties))
-        {
-            PropertiesProcessor propertiesProcessor = new DelegatingPropertiesProcessor(List.of(
-                    new EncryptedPropertiesProcessor(properties), vaultProcessor
-            ));
-            new SystemPropertiesInitializer(propertiesProcessor).setSystemProperties(properties);
-            properties = propertiesProcessor.processProperties(properties);
-        }
+        System.out.println("=======================================================================");
+        List<PropertiesProcessor> processors = loadProcessors();
+        System.out.println("Processors: " + processors.size());
+        PropertiesProcessor propertiesProcessor = new DelegatingPropertiesProcessor(processors);
+        System.out.println("=======================================================================");
+        new SystemPropertiesInitializer(propertiesProcessor).setSystemProperties(properties);
+        properties = propertiesProcessor.processProperties(properties);
 
         instance = new ConfigurationResolver(properties);
         return instance;
+    }
+
+    private static List<PropertiesProcessor> loadProcessors()
+    {
+        List<PropertiesProcessor> processors = new ArrayList<>();
+        ServiceLoader<PropertiesProcessor> loader = ServiceLoader.load(PropertiesProcessor.class);
+        loader.forEach(processors::add);
+        return processors;
     }
 
     private static PropertyPlaceholderHelper createPropertyPlaceholderHelper(boolean ignoreUnresolvablePlaceholders)
